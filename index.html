@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+      <h2>Chat với AI</h2>
+      <div id="chat"></div>
+      <input id="userInput"><button onclick="send()">Gửi</button>
+      <script>
+            const apiKey = "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";
+            const chat = document.getElementById("chat");
+
+            function add(role, text) {
+                  chat.innerHTML += `<p>${role}: ${text}</p>`;
+            }
+
+            async function send() {
+                  const msg = userInput.value;
+                  add("Bạn", msg);
+                  userInput.value = "";
+
+                  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+                        method: "POST",
+                        headers: {
+                              "Content-Type": "application/json",
+                              "Authorization": "Bearer " + apiKey
+                        },
+                        body: JSON.stringify({
+                              model: "meta-llama/llama-4-scout-17b-16e-instruct",
+                              messages: [{ role: "user", content: msg }]
+                        })
+                  });
+                  const data = await res.json();
+                  add("AI", data.choices[0].message.content);
+            }
+      </script>
+</body>
+
+</html>
